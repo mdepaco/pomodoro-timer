@@ -1,3 +1,115 @@
+/* ==============================================================
+   CONFIGURACIÓN DE DURACIONES (nuevo)
+================================================================ */
+const LS_SETTINGS = 'pomodoro_settings';
+
+// Valores por defecto (coinciden con los que ya usábamos)
+const DEFAULT_SETTINGS = {
+  workMinutes: 25,
+  breakMinutes: 5
+};
+
+/* Cargar ajustes desde localStorage (o usar defaults) */
+function loadSettings() {
+  const saved = localStorage.getItem(LS_SETTINGS);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      return {
+        workMinutes: Number(parsed.workMinutes) || DEFAULT_SETTINGS.workMinutes,
+        breakMinutes: Number(parsed.breakMinutes) || DEFAULT_SETTINGS.breakMinutes
+      };
+    } catch (e) { /* ignore */ }
+  }
+  return { ...DEFAULT_SETTINGS };
+}
+
+/* Guardar ajustes en localStorage */
+function saveSettings(settings) {
+  localStorage.setItem(LS_SETTINGS, JSON.stringify(settings));
+}
+
+/* Aplicar los ajustes al temporizador (actualiza constantes) */
+function applySettings(settings) {
+  // Convertimos a segundos para la lógica interna
+  WORK_TIME   = settings.workMinutes * 60;
+  SHORT_BREAK = settings.breakMinutes * 60;
+  // Si el temporizador está detenido, reiniciamos la vista con los nuevos valores
+  if (!state.running) {
+    state.remaining = getPhaseDuration(state.phase);
+    render();
+  }
+}
+
+/* ==============================================================
+   UI DE CONFIGURACIÓN (listeners)
+================================================================ */
+const settingsToggle   = document.getElementById('settingsToggle');
+const settingsPanel    = document.getElementById('settingsPanel');
+const cancelSettings   = document.getElementById('cancelSettings');
+const applySettingsBtn = document.getElementById('applySettings');
+const presetSelect     = document.getElementById('presetSelect');
+const workInput        = document.getElementById('workInput');
+const breakInput       = document.getElementById('breakInput');
+
+/* Mostrar/ocultar panel */
+settingsToggle.addEventListener('click', () => {
+  // Rellenamos los campos con los valores actuales antes de abrir
+  const cur = loadSettings();
+  workInput.value  = cur.workMinutes;
+  breakInput.value = cur.breakMinutes;
+  presetSelect.value = ''; // reset preset
+  settingsPanel.classList.add('show');
+});
+
+cancelSettings.addEventListener('click', () => {
+  settingsPanel.classList.remove('show');
+});
+
+/* Cuando el usuario escoge un preset, rellenamos los inputs */
+presetSelect.addEventListener('change', (e) => {
+  const val = e.target.value; // formato "25-5"
+  if (val) {
+    const [w, b] = val.split('-').map(Number);
+    workInput.value  = w;
+    breakInput.value = b;
+  }
+});
+
+/* Aplicar los cambios */
+applySettingsBtn.addEventListener('click', () => {
+  const workM  = Number(workInput.value);
+  const breakM = Number(breakInput.value);
+
+  // Validación básica
+  if (isNaN(workM) || workM <= 0) {
+    alert('Introduce un número válido de minutos para la sesión de trabajo.');
+    return;
+  }
+  if (isNaN(breakM) || breakM <= 0) {
+    alert('Introduce un número válido de minutos para el descanso.');
+    return;
+  }
+
+  const newSettings = { workMinutes: workM, breakMinutes: breakM };
+  saveSettings(newSettings);
+  applySettings(newSettings);
+  settingsPanel.classList.remove('show');
+});
+
+/* ==============================================================
+   INTEGRACIÓN CON EL RESTO DEL CÓDIGO
+================================================================ */
+
+/* Variables de tiempo que antes eran const ahora son let (para poder reassignarlas) */
+let WORK_TIME   = DEFAULT_SETTINGS.workMinutes * 60;
+let SHORT_BREAK = DEFAULT_SETTINGS.breakMinutes * 60;
+const LONG_BREAK = 15 * 60;               // mantenemos el largo fijo (puedes hacerlo configurable también)
+const CYCLES_BEFORE_LONG = 4;
+
+/* Al iniciar la app cargamos los ajustes guardados */
+const userSettings = loadSettings();
+applySettings(userSettings);
 //TEMP CONFIG//
 const WORK_TIME   = 25 * 60;
 const SHORT_BREAK = 5  * 60;
