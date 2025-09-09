@@ -87,4 +87,52 @@
           <th class="pb-2 text-left">Fecha</th>
           <th class="pb-2 text-right">Trabajo (min)</th>
           <th class="pb-2 text-right">Descanso (min)</th>
-          <th c
+          <th class="pb-2 text-right">Ciclos</th>
+        </tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+
+      <div class="flex justify-between mt-4">
+        <button id="closeStats"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded">Cerrar</button>
+        <button id="exportCsv"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">Exportar CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXPORT / IMPORT CONFIG ===================== -->
+  <div class="flex gap-2 justify-center mt-4">
+    <button id="exportConfig"
+            class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+      ⬇️ Exportar Config.
+    </button>
+    <label class="relative cursor-pointer">
+      <input type="file" id="importFile" accept=".json" class="hidden">
+      <span class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded">⬆️ Importar Config.</span>
+    </label>
+  </div>
+
+  <!-- ===================== TARJETA PRINCIPAL ===================== -->
+  <div class="rounded-xl p-6 w-80 text-center">
+    <h1 class="text-2xl font-bold mb-4">Pomodoro Lite</h1>
+
+    <div id="timerDisplay" class="text-5xl font-mono mb-4">25:00</div>
+
+    <div class="flex justify-center gap-2 mb-4">
+      <button id="startBtn" class="btn-primary">▶️ Iniciar</button>
+      <button id="pauseBtn" class="btn-primary hidden">⏸ Pausar</button>
+      <button id="resetBtn" class="btn-secondary hidden">🔄 Reiniciar</button>
+    </div>
+
+    <div class="text-sm text-gray-600 mb-2"><span id="sessionInfo">Sesión de trabajo</span></div>
+    <div class="text-xs text-gray-500"><span id="cycleCount">Ciclo: 0/4</span></div>
+  </div>
+
+  <!-- Audio para Focus Music (puedes cambiar la URL por la pista que prefieras) -->
+  <audio id="focusMusic" loop preload="auto"
+         src="https://cdn.jsdelivr.net/gh/robb0wen/lofi@master/lofi.mp3"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
