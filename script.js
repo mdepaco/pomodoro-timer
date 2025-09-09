@@ -110,6 +110,7 @@ const CYCLES_BEFORE_LONG = 4;
 /* Al iniciar la app cargamos los ajustes guardados */
 const userSettings = loadSettings();
 applySettings(userSettings);
+
 //TEMP CONFIG//
 const WORK_TIME   = 25 * 60;
 const SHORT_BREAK = 5  * 60;
