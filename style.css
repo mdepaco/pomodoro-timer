@@ -62,4 +62,103 @@ html {
   background-color: rgba(0,0,0,.2);
   border-radius: 3px;
 }
+/* --------------------------------------------------------------
+   VARIABLES COMPARTIDAS (se pueden sobrescribir por tema)
+-------------------------------------------------------------- */
+:root {
+  --font-base: 'Inter', sans-serif;
+  --radius: 1rem;
+}
+
+/* --------------------------- PLAYFUL --------------------------- */
+.theme-playful {
+  --bg:        #faf3e0;          /* fondo cálido */
+  --card-bg:   #ffffff;
+  --primary:   #ff6f61;          /* botones */
+  --accent:    #6ec1e4;          /* secundarios */
+  --text:      #333333;
+  --shadow:    0 8px 20px rgba(0,0,0,.12);
+  font-family: var(--font-base);
+}
+.theme-playful .rounded-xl {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.theme-playful .btn-primary   { background: var(--primary); }
+.theme-playful .btn-secondary { background: var(--accent); }
+
+/* --------------------------- KIDDO --------------------------- */
+.theme-kiddo {
+  --bg:        #fff9e6;          /* amarillo suave */
+  --card-bg:   #fffbf0;
+  --primary:   #ff6b6b;          /* rojo chispeante */
+  --accent:    #ffd93d;          /* amarillo brillante */
+  --text:      #2c2c2c;
+  --shadow:    0 6px 16px rgba(0,0,0,.1);
+  --font-base: 'Comic Neue', cursive;
+}
+.theme-kiddo .rounded-xl {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.theme-kiddo .btn-primary   { background: var(--primary); }
+.theme-kiddo .btn-secondary { background: var(--accent); }
+
+/* --------------------------- METRO --------------------------- */
+.theme-metro {
+  --bg:        #f5f5f5;          /* gris muy claro */
+  --card-bg:   #ffffff;
+  --primary:   #1976d2;          /* azul material */
+  --accent:    #424242;          /* gris oscuro */
+  --text:      #212121;
+  --shadow:    0 4px 12px rgba(0,0,0,.08);
+  --font-base: 'Roboto', sans-serif;
+}
+.theme-metro .rounded-xl {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.theme-metro .btn-primary   { background: var(--primary); }
+.theme-metro .btn-secondary { background: var(--accent); }
+
+/* --------------------------------------------------------------
+   REGLAS COMPARTIDAS (aplican a todos los temas)
+-------------------------------------------------------------- */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Botones comunes – usamos variables para colores */
+.btn-primary,
+.btn-secondary {
+  color: #fff;
+  padding: .55rem 1.1rem;
+  border-radius: .5rem;
+  transition: background .2s, box-shadow .2s;
+}
+.btn-primary:hover   { opacity: .9; }
+.btn-secondary:hover { opacity: .9; }
+
+/* Timer y animaciones */
+#timerDisplay { font-size: 2.8rem; transition: color .3s; }
+.finished #timerDisplay { animation: blink 1s steps(2,start) infinite; }
+@keyframes blink { 0%,49% {opacity:1;} 50%,100% {opacity:0;} }
+
+/* Overlays (config / stats) */
+#settingsPanel,
+#statsPanel {
+  backdrop-filter: blur(2px);
+}
+#settingsPanel.show,
+#statsPanel.show { display: flex; animation: fadeIn .2s ease-out forwards; }
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+/* Tabla de historial */
+table th, table td { padding:.3rem .5rem; }
+table tr:nth-child(even){background:rgba(0,0,0,.03);}
+
 
