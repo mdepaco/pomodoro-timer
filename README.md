@@ -1,2 +1,2 @@
-# pomodoro-timer
+# Pomodoro-timer
 A local pomodoro for your daily tasks
