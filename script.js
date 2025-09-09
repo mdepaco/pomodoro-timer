@@ -112,26 +112,32 @@ function addToHistory(){
 /* --------------------------------------------------------------
    THEME HANDLING
 -------------------------------------------------------------- */
-const themes = {
-  'theme-a': 'Minimalista (A)',
-  'theme-b': 'Retro Dark (B)',
-  'theme-c': 'Playful (C)'
+const THEMES = {
+  'theme-playful': 'Playful',
+  'theme-kiddo'  : 'Kiddo',
+  'theme-metro'  : 'Metro'
 };
 
 function applyTheme(themeClass){
-  document.body.classList.remove(...Object.keys(themes));
+  document.body.classList.forEach(cls => {
+    if (cls.startsWith('theme-')) document.body.classList.remove(cls);
+  });
   document.body.classList.add(themeClass);
   localStorage.setItem(LS_THEME, themeClass);
   const sel = document.getElementById('themeSelect');
-  if(sel) sel.value = themeClass;
+  if (sel) sel.value = themeClass;
 }
+
 function loadTheme(){
   const saved = localStorage.getItem(LS_THEME);
-  const defaultTheme = 'theme-c';
-  const themeToApply = saved && themes[saved] ? saved : defaultTheme;
+  const defaultTheme = 'theme-playful';
+  const themeToApply = saved && THEMES[saved] ? saved : defaultTheme;
   applyTheme(themeToApply);
 }
 
+/* Listener del selector */
+document.getElementById('themeSelect')
+        .addEventListener('change', e => applyTheme(e.target.value));
 /* ==============================================================
    UTILIDADES DE TIEMPO
 ================================================================ */
