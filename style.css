@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------
-   BOTONES COMUNES (se usan en los tres temas)
+   BOTONES COMUNES (usados en todos los temas)
 -------------------------------------------------------------- */
 .btn-primary {
   color: #fff;
@@ -83,13 +83,16 @@
   0%,49% { opacity:1; }
   50%,100% { opacity:0; }
 }
-/* Overlay del panel de configuración */
-#settingsPanel {
+
+/* --------------------------------------------------------------
+   OVERLAY Y ANIMACIONES DE PANEL (configuración / estadísticas)
+-------------------------------------------------------------- */
+#settingsPanel,
+#statsPanel {
   backdrop-filter: blur(2px);
 }
-
-/* Pequeña animación de aparición/desaparición */
-#settingsPanel.show {
+#settingsPanel.show,
+#statsPanel.show {
   display: flex;
   animation: fadeIn .2s ease-out forwards;
 }
@@ -97,3 +100,11 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+/* --------------------------------------------------------------
+   ESTILOS ADICIONALES PARA LA TABLA DE HISTORIAL
+-------------------------------------------------------------- */
+table th, table td {
+  padding: .3rem .5rem;
+}
+table tbody tr:nth-child(even) { background: rgba(0,0,0,.03); }
