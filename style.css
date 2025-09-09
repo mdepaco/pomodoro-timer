@@ -1,81 +1,51 @@
-/* --------------------------------------------------------------
-   BOTONES COMUNES (usados en todos los temas)
--------------------------------------------------------------- */
-.btn-primary {
-  color: #fff;
-  padding: .55rem 1.1rem;
-  border-radius: .5rem;
-  transition: background .2s, box-shadow .2s;
-}
-.btn-primary:hover { opacity: .9; }
-
-.btn-secondary {
-  color: #fff;
-  padding: .55rem 1.1rem;
-  border-radius: .5rem;
+/* ---------- TIPOGRAFÍA FLUIDA ----------*/
+html {
+  font-size: clamp(14px, 1vw + 0.5rem, 18px);
 }
 
-/* --------------------------------------------------------------
-   TEMA A – Minimalista Monocromo
--------------------------------------------------------------- */
-.theme-a {
-  background: #f5f5f5;
-  color: #212121;
-  font-family: system-ui, sans-serif;
-}
-.theme-a .rounded-xl {
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,.08);
-}
-.theme-a .btn-primary { background: #1976d2; }
-.theme-a .btn-secondary { background: #e0e0e0; color:#212121; }
-
-/* --------------------------------------------------------------
-   TEMA B – Retro Dark
--------------------------------------------------------------- */
-.theme-b {
-  background: #0d0d0d;
-  color: #39ff14;
-  font-family: 'Press Start 2P', cursive;
-}
-.theme-b .rounded-xl {
-  background: #111;
-  border: 2px solid #ff1493;
-  box-shadow: 0 0 12px #39ff14;
-}
-.theme-b .btn-primary {
-  background: #39ff14;
-  color: #0d0d0d;
-  box-shadow: 0 0 8px #39ff14;
-}
-.theme-b .btn-secondary {
-  background: #ff1493;
-  color: #0d0d0d;
+/* ---------- CONTENEDOR PRINCIPAL ----------*/
+.rounded-xl {
+  max-width: 100%;
+  width: 100%;
 }
 
-/* --------------------------------------------------------------
-   TEMA C – Light & Playful
--------------------------------------------------------------- */
-.theme-c {
-  background: #faf3e0;
-  color: #333;
-  font-family: 'Inter', sans-serif;
-}
-.theme-c .rounded-xl {
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,.12);
-}
-.theme-c .btn-primary { background: #ff6f61; }
-.theme-c .btn-secondary { background: #6ec1e4; }
-
-/* --------------------------------------------------------------
-   TIMER & ANIMACIONES COMUNES
--------------------------------------------------------------- */
+/* ---------- TIMER ----------*/
 #timerDisplay {
-  font-size: 2.8rem;
-  transition: color .3s;
+  line-height: 1;
 }
+
+/* ---------- BOTONES ---------- */
+.btn-primary,
+.btn-secondary {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ---------- PANEL DE SETTINGS ---------- */
+#settingsPanel > div,
+#statsPanel > div {
+  max-height: calc(100vh - 2rem);
+}
+
+/* ---------- RESPONSIVE BREAKPOINTS ----------*/
+@media (max-width: 640px) {           /* ≤ sm */
+  .btn-primary, .btn-secondary {
+    font-size: 0.875rem;               /* text-sm */
+    padding: 0.5rem 0.75rem;
+  }
+  .rounded-xl {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) { /* md */
+  .btn-primary, .btn-secondary {
+    font-size: 1rem;                  /* text-base */
+    padding: 0.55rem 1.1rem;
+  }
+}
+
+/* ---------- ANIMACIONES ----------*/
 .finished #timerDisplay {
   animation: blink 1s steps(2,start) infinite;
 }
@@ -84,27 +54,12 @@
   50%,100% { opacity:0; }
 }
 
-/* --------------------------------------------------------------
-   OVERLAY Y ANIMACIONES DE PANEL (configuración / estadísticas)
--------------------------------------------------------------- */
-#settingsPanel,
-#statsPanel {
-  backdrop-filter: blur(2px);
+/* ---------- SCROLL EN MODALES ----------*/
+::-webkit-scrollbar {
+  width: 6px;
 }
-#settingsPanel.show,
-#statsPanel.show {
-  display: flex;
-  animation: fadeIn .2s ease-out forwards;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,.2);
+  border-radius: 3px;
 }
 
-/* --------------------------------------------------------------
-   ESTILOS ADICIONALES PARA LA TABLA DE HISTORIAL
--------------------------------------------------------------- */
-table th, table td {
-  padding: .3rem .5rem;
-}
-table tbody tr:nth-child(even) { background: rgba(0,0,0,.03); }
