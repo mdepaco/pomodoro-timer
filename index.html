@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Pomodoro Lite – Selección de estilo</title>
+  <title>Pomodoro Lite – Lumo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Fuente Inter (usada en el tema C) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -23,14 +23,14 @@
       <option value="theme-c" selected>Playful (C)</option>
     </select>
   </div>
-  
- <!-- ===================== BOTÓN DE CONFIGURACIÓN ===================== -->
+
+  <!-- ===================== BOTÓN DE CONFIGURACIÓN ===================== -->
   <button id="settingsToggle"
           class="absolute top-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-md">
     ⚙️ Config.
   </button>
 
-  <!-- ===================== PANEL DE CONFIGURACIÓN (oculto por defecto) ===================== -->
+  <!-- ===================== PANEL DE CONFIGURACIÓN ===================== -->
   <div id="settingsPanel"
        class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
     <div class="bg-white rounded-lg p-6 w-80">
@@ -70,22 +70,21 @@
       </div>
     </div>
   </div>
-  <!-- ===================== TARJETA PRINCIPAL ===================== -->
-  <div class="rounded-xl p-6 w-80 text-center">
-    <h1 class="text-2xl font-bold mb-4">Pomodoro Lite</h1>
 
-    <div id="timerDisplay" class="text-5xl font-mono mb-4">25:00</div>
+  <!-- ===================== BOTÓN DE ESTADÍSTICAS ===================== -->
+  <button id="statsToggle"
+          class="absolute bottom-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-md">
+    📊 Estadísticas
+  </button>
 
-    <div class="flex justify-center gap-2 mb-4">
-      <button id="startBtn" class="btn-primary">▶️ Iniciar</button>
-      <button id="pauseBtn" class="btn-primary hidden">⏸ Pausar</button>
-      <button id="resetBtn" class="btn-secondary hidden">🔄 Reiniciar</button>
-    </div>
-
-    <div class="text-sm text-gray-600 mb-2"><span id="sessionInfo">Sesión de trabajo</span></div>
-    <div class="text-xs text-gray-500"><span id="cycleCount">Ciclo: 0/4</span></div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+  <!-- ===================== PANEL DE ESTADÍSTICAS ===================== -->
+  <div id="statsPanel"
+       class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
+      <h2 class="text-xl font-semibold mb-4">Historial de Pomodoros</h2>
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="border-b">
+          <th class="pb-2 text-left">Fecha</th>
+          <th class="pb-2 text-right">Trabajo (min)</th>
+          <th class="pb-2 text-right">Descanso (min)</th>
+          <th c
