@@ -2,41 +2,42 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Pomodoro Lite</title>
+  <title>Pomodoro Lite – Selección de estilo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Tailwind vía CDN (muy ligero) -->
+  <!-- Fuente Inter (usada en el tema C) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Day.js para manejo de tiempos (CDN) -->
   <script src="https://unpkg.com/dayjs@1/dayjs.min.js"></script>
-
-  <!-- Archivo de estilos propio -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- Manifest para PWA (opcional) -->
   <link rel="manifest" href="manifest.webmanifest">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="theme-c flex items-center justify-center min-h-screen">
 
-  <div class="bg-white rounded-xl shadow-lg p-6 w-80 text-center">
+  <!-- ===================== SELECTOR DE TEMA ===================== -->
+  <div class="absolute top-4 right-4 z-10">
+    <label for="themeSelect" class="sr-only">Seleccionar tema</label>
+    <select id="themeSelect"
+            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="theme-a">Minimalista (A)</option>
+      <option value="theme-b">Retro Dark (B)</option>
+      <option value="theme-c" selected>Playful (C)</option>
+    </select>
+  </div>
+
+  <!-- ===================== TARJETA PRINCIPAL ===================== -->
+  <div class="rounded-xl p-6 w-80 text-center">
     <h1 class="text-2xl font-bold mb-4">Pomodoro Lite</h1>
 
     <div id="timerDisplay" class="text-5xl font-mono mb-4">25:00</div>
 
     <div class="flex justify-center gap-2 mb-4">
-      <button id="startBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">▶️ Iniciar</button>
-      <button id="pauseBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded hidden">⏸ Pausar</button>
-      <button id="resetBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded hidden">🔄 Reiniciar</button>
+      <button id="startBtn" class="btn-primary">▶️ Iniciar</button>
+      <button id="pauseBtn" class="btn-primary hidden">⏸ Pausar</button>
+      <button id="resetBtn" class="btn-secondary hidden">🔄 Reiniciar</button>
     </div>
 
-    <div class="text-sm text-gray-600 mb-2">
-      <span id="sessionInfo">Sesión de trabajo</span>
-    </div>
-
-    <div class="text-xs text-gray-500">
-      <span id="cycleCount">Ciclo: 0/4</span>
-    </div>
+    <div class="text-sm text-gray-600 mb-2"><span id="sessionInfo">Sesión de trabajo</span></div>
+    <div class="text-xs text-gray-500"><span id="cycleCount">Ciclo: 0/4</span></div>
   </div>
 
   <script src="script.js"></script>
