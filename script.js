@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', () => {
 /* ==============================================================
    CONSTANTES Y CLAVES DE LOCAL STORAGE
 ================================================================ */
@@ -443,3 +444,4 @@ resetBtn.removeEventListener('click', resetTimer);
 startBtn.addEventListener('click', startTimerWithMusic);
 pauseBtn.addEventListener('click', pauseTimer);
 resetBtn.addEventListener('click', resetTimer);
+});
