@@ -456,6 +456,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const musicStatus = document.getElementById('musicStatus');
   const music = document.getElementById('focusMusic');
 
+  if (music) music.volume = 1.0; // Asegura volumen al máximo
+
   if (musicToggle && musicStatus && music) {
     musicToggle.addEventListener('click', () => {
       musicOn = !musicOn;
@@ -469,10 +471,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Aquí puedes agregar el resto de listeners SOLO si los elementos existen
-  // Por ejemplo:
-  // const settingsToggle = document.getElementById('settingsToggle');
-  // if (settingsToggle) { ... }
 });
 
 /* Control automático de música al cambiar de fase */
