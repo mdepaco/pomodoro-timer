@@ -1,4 +1,3 @@
-
 /* ==============================================================
    CONSTANTES Y CLAVES DE LOCAL STORAGE
 ================================================================ */
@@ -416,16 +415,40 @@ importFileInput.addEventListener('change', async e=>{
 /* --------------------------------------------------------------
    INICIALIZACIÓN
 -------------------------------------------------------------- */
-loadState();
-loadTheme();
-loadHistory();
-applySettings(loadSettings());   // asegura que WORK_TIME y SHORT_BREAK estén alineados
-render();
+document.addEventListener('DOMContentLoaded', () => {
+  // Inicialización de tema
+  loadTheme();
+  const themeSelect = document.getElementById('themeSelect');
+  if (themeSelect) {
+    themeSelect.addEventListener('change', e => applyTheme(e.target.value));
+  }
 
-/* Solicitar permiso de notificaciones (solo una vez) */
-if ('Notification' in window && Notification.permission !== 'granted'){
-  Notification.requestPermission();
-}
+  // Inicialización de estado y settings
+  loadState();
+  loadHistory();
+  applySettings(loadSettings());
+  render();
+
+  // Botones principales
+  const startBtn = document.getElementById('startBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  if (startBtn && pauseBtn && resetBtn) {
+    startBtn.addEventListener('click', startTimerWithMusic);
+    pauseBtn.addEventListener('click', pauseTimer);
+    resetBtn.addEventListener('click', resetTimer);
+  }
+
+  // Solicitar permiso de notificaciones
+  if ('Notification' in window && Notification.permission !== 'granted'){
+    Notification.requestPermission();
+  }
+
+  // Aquí puedes agregar el resto de listeners SOLO si los elementos existen
+  // Por ejemplo:
+  // const settingsToggle = document.getElementById('settingsToggle');
+  // if (settingsToggle) { ... }
+});
 
 /* Control automático de música al cambiar de fase */
 function nextPhaseWithMusic(){
@@ -436,11 +459,3 @@ function startTimerWithMusic(){
   startTimer();
   controlMusic();
 }
-
-/* Sobreescribimos los handlers para incluir música */
-startBtn.removeEventListener('click', startTimer);
-pauseBtn.removeEventListener('click', pauseTimer);
-resetBtn.removeEventListener('click', resetTimer);
-startBtn.addEventListener('click', startTimerWithMusic);
-pauseBtn.addEventListener('click', pauseTimer);
-resetBtn.addEventListener('click', resetTimer);

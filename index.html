@@ -44,14 +44,64 @@
   <div id="settingsPanel"
        class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
     <div class="bg-white rounded-lg p-6 w-11/12 max-w-sm md:max-w-md">
-      <!-- contenido del panel -->
+      <!-- Panel de configuración Pomodoro -->
+<h2 class="text-xl font-semibold mb-4">Configuración</h2>
+<div class="mb-4">
+  <label for="presetSelect" class="block text-sm font-medium mb-1">Preset rápido:</label>
+  <select id="presetSelect" class="w-full border rounded px-2 py-1">
+    <option value="">Personalizado</option>
+    <option value="pomodoro">Pomodoro (25/5)</option>
+    <option value="short">Corto (15/3)</option>
+    <option value="long">Largo (50/10)</option>
+  </select>
+</div>
+<div class="mb-4 flex gap-2">
+  <div class="flex-1">
+    <label for="workInput" class="block text-sm font-medium mb-1">Trabajo (min):</label>
+    <input id="workInput" type="number" min="1" max="120" value="25"
+           class="w-full border rounded px-2 py-1">
+  </div>
+  <div class="flex-1">
+    <label for="breakInput" class="block text-sm font-medium mb-1">Descanso (min):</label>
+    <input id="breakInput" type="number" min="1" max="60" value="5"
+           class="w-full border rounded px-2 py-1">
+  </div>
+</div>
+<div class="flex justify-end gap-2 mt-4">
+  <button id="cancelSettings" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-1 rounded">Cancelar</button>
+  <button id="applySettings" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">Aplicar</button>
+</div>
     </div>
   </div>
 
   <div id="statsPanel"
        class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
     <div class="bg-white rounded-lg p-6 w-11/12 max-w-md max-h-[80vh] overflow-y-auto">
-      <!-- contenido del panel -->
+      <!-- Panel de estadísticas Pomodoro -->
+<h2 class="text-xl font-semibold mb-4">Estadísticas</h2>
+<div class="mb-4">
+  <button id="exportCsv" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+    ⬇️ Exportar CSV
+  </button>
+  <button id="closeStats" class="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-1 rounded">
+    Cerrar
+  </button>
+</div>
+<div class="overflow-x-auto">
+  <table class="min-w-full text-xs border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="px-2 py-1 border">Fecha</th>
+        <th class="px-2 py-1 border">Fase</th>
+        <th class="px-2 py-1 border">Duración</th>
+        <th class="px-2 py-1 border">Ciclo</th>
+      </tr>
+    </thead>
+    <tbody id="historyBody">
+      <!-- Las filas se llenan dinámicamente -->
+    </tbody>
+  </table>
+</div>
     </div>
   </div>
 
@@ -64,14 +114,15 @@
       25:00
     </div>
 
-    <div class="flex flex-col sm:flex-row justify-center gap-2 mb-4">
-      <button id="startBtn"  class="btn-primary w-full sm:w-auto">▶️ Iniciar</button>
-      <button id="pauseBtn" class="btn-primary w-full sm:w-auto hidden">⏸ Pausar</button>
-      <button id="resetBtn" class="btn-secondary w-full sm:w-auto hidden">🔄 Reiniciar</button>
-    </div>
+    <!-- Botones de control Pomodoro -->
+<div class="flex justify-center gap-2 mb-4">
+  <button id="startBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Iniciar</button>
+  <button id="pauseBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded hidden">Pausar</button>
+  <button id="resetBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded hidden">Reiniciar</button>
+</div>
 
     <div class="text-sm text-gray-600 mb-2"><span id="sessionInfo">Sesión de trabajo</span></div>
-    <div class="text-xs text-gray-500"><span id="cycleCount">Ciclo: 0/4</span></div>
+    <div class="text-xs text-gray-500 mb-2" id="cycleCount"></div>
 
     <!-- Export / Import (apilado en móvil) -->
     <div class="flex flex-col sm:flex-row gap-2 justify-center mt-4">
@@ -92,6 +143,6 @@
   <audio id="focusMusic" loop preload="auto"
          src="https://cdn.pixabay.com/audio/2023/04/03/audio_1234567890.mp3"
          class="hidden md:block"></audio>
-  <script src="scripts.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
