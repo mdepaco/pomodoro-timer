@@ -451,6 +451,24 @@ document.addEventListener('DOMContentLoaded', () => {
     Notification.requestPermission();
   }
 
+  // --- Control manual de música ---
+  const musicToggle = document.getElementById('musicToggle');
+  const musicStatus = document.getElementById('musicStatus');
+  const music = document.getElementById('focusMusic');
+
+  if (musicToggle && musicStatus && music) {
+    musicToggle.addEventListener('click', () => {
+      musicOn = !musicOn;
+      if (musicOn) {
+        music.play().catch(()=>{});
+        musicStatus.textContent = 'On';
+      } else {
+        music.pause();
+        musicStatus.textContent = 'Off';
+      }
+    });
+  }
+
   // Aquí puedes agregar el resto de listeners SOLO si los elementos existen
   // Por ejemplo:
   // const settingsToggle = document.getElementById('settingsToggle');
