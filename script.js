@@ -13,7 +13,7 @@ const DEFAULT_SETTINGS = {
   workMinutes: 25,
   breakMinutes: 5
 };
-const LONG_BREAK = 15 * 60;               // 15 min 
+const LONG_BREAK = 15 * 60;
 const CYCLES_BEFORE_LONG = 4;
 
 /* --------------------------------------------------------------
@@ -27,9 +27,9 @@ let SHORT_BREAK = DEFAULT_SETTINGS.breakMinutes * 60;
 -------------------------------------------------------------- */
 let state = {
   remaining: WORK_TIME,
-  phase: 'work',          // work | shortBreak | longBreak
+  phase: 'work',
   running: false,
-  cycle: 0,               // ciclos dentro del bloque actual
+  cycle: 0,
   totalCycles: 0
 };
 
@@ -68,7 +68,6 @@ function saveSettings(s){ localStorage.setItem(LS_SETTINGS, JSON.stringify(s)); 
 function applySettings(s){
   WORK_TIME   = s.workMinutes  * 60;
   SHORT_BREAK = s.breakMinutes * 60;
-  // Si el temporizador está detenido, actualizamos la vista
   if(!state.running){
     state.remaining = getPhaseDuration(state.phase);
     render();
@@ -135,9 +134,6 @@ function loadTheme(){
   applyTheme(themeToApply);
 }
 
-/* Listener del selector */
-document.getElementById('themeSelect')
-        .addEventListener('change', e => applyTheme(e.target.value));
 /* ==============================================================
    UTILIDADES DE TIEMPO
 ================================================================ */
@@ -155,27 +151,28 @@ function getPhaseDuration(p){
 /* ==============================================================
    RENDERING
 ================================================================ */
-const timerEl      = document.getElementById('timerDisplay');
-const startBtn     = document.getElementById('startBtn');
-const pauseBtn     = document.getElementById('pauseBtn');
-const resetBtn     = document.getElementById('resetBtn');
-const sessionInfo  = document.getElementById('sessionInfo');
-const cycleInfo    = document.getElementById('cycleCount');
-
 function render(){
-  timerEl.textContent = formatTime(state.remaining);
-  sessionInfo.textContent = {
+  const timerEl      = document.getElementById('timerDisplay');
+  const sessionInfo  = document.getElementById('sessionInfo');
+  const cycleInfo    = document.getElementById('cycleCount');
+  const startBtn     = document.getElementById('startBtn');
+  const pauseBtn     = document.getElementById('pauseBtn');
+  const resetBtn     = document.getElementById('resetBtn');
+
+  if (timerEl) timerEl.textContent = formatTime(state.remaining);
+  if (sessionInfo) sessionInfo.textContent = {
     work: 'Sesión de trabajo',
     shortBreak: 'Descanso corto',
     longBreak: 'Descanso largo'
   }[state.phase];
-  cycleInfo.textContent = `Ciclo: ${state.cycle}/${CYCLES_BEFORE_LONG}`;
+  if (cycleInfo) cycleInfo.textContent = `Ciclo: ${state.cycle}/${CYCLES_BEFORE_LONG}`;
 
-  startBtn.classList.toggle('hidden', state.running);
-  pauseBtn.classList.toggle('hidden', !state.running);
-  resetBtn.classList.toggle('hidden', !state.running && state.remaining===getPhaseDuration(state.phase));
+  if (startBtn && pauseBtn && resetBtn) {
+    startBtn.classList.toggle('hidden', state.running);
+    pauseBtn.classList.toggle('hidden', !state.running);
+    resetBtn.classList.toggle('hidden', !state.running && state.remaining===getPhaseDuration(state.phase));
+  }
 
-  // Parpadeo al acabar
   if(state.remaining===0) document.body.classList.add('finished');
   else document.body.classList.remove('finished');
 }
@@ -198,8 +195,8 @@ function startTimer(){
       playBeep();
       clearInterval(interval);
       state.running = false;
-      addToHistory();          // registrar la fase terminada
-      nextPhase();             // pasar a la siguiente fase
+      addToHistory();
+      nextPhaseWithMusic();
       render();
       saveState();
     }
@@ -280,75 +277,207 @@ function controlMusic() {
   if (!music) return;
   if (musicOn && state.phase === 'work') {
     music.play().catch(()=>{});
+    const musicStatus = document.getElementById('musicStatus');
+    if (musicStatus) musicStatus.textContent = 'On';
   } else {
     music.pause();
+    const musicStatus = document.getElementById('musicStatus');
+    if (musicStatus) musicStatus.textContent = 'Off';
   }
 }
 
 /* --------------------------------------------------------------
-   EVENT LISTENERS DE INTERFAZ
+   INICIALIZACIÓN Y EVENTOS
 -------------------------------------------------------------- */
-startBtn.addEventListener('click', startTimer);
-pauseBtn.addEventListener('click', pauseTimer);
-resetBtn.addEventListener('click', resetTimer);
+document.addEventListener('DOMContentLoaded', () => {
+  // Inicialización de tema
+  loadTheme();
 
-/* Tema */
-document.getElementById('themeSelect').addEventListener('change', e=>{
-  applyTheme(e.target.value);
-});
+  // Inicialización de estado y settings
+  loadState();
+  loadHistory();
+  applySettings(loadSettings());
+  render();
 
-/* Configuración de tiempos */
-const settingsToggle   = document.getElementById('settingsToggle');
-const settingsPanel    = document.getElementById('settingsPanel');
-const cancelSettings   = document.getElementById('cancelSettings');
-const applySettingsBtn = document.getElementById('applySettings');
-const presetSelect     = document.getElementById('presetSelect');
-const workInput        = document.getElementById('workInput');
-const breakInput       = document.getElementById('breakInput');
+  // --- Botones principales ---
+  const startBtn = document.getElementById('startBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  if (startBtn)  startBtn.addEventListener('click', startTimerWithMusic);
+  if (pauseBtn)  pauseBtn.addEventListener('click', pauseTimer);
+  if (resetBtn)  resetBtn.addEventListener('click', resetTimer);
 
-settingsToggle.addEventListener('click', ()=>{
-  const cur = loadSettings();
-  workInput.value  = cur.workMinutes;
-  breakInput.value = cur.breakMinutes;
-  presetSelect.value = '';
-  settingsPanel.classList.add('show');
-});
-cancelSettings.addEventListener('click', ()=> settingsPanel.classList.remove('show'));
+  // --- Control manual de música ---
+  const musicToggle = document.getElementById('musicToggle');
+  const musicStatus = document.getElementById('musicStatus');
+  const music = document.getElementById('focusMusic');
+  if (music) music.volume = 1.0;
 
-presetSelect.addEventListener('change', e=>{
-  const val = e.target.value;
-  if(val){
-    const [w,b] = val.split('-').map(Number);
-    workInput.value  = w;
-    breakInput.value = b;
+  if (musicToggle && musicStatus && music) {
+    musicToggle.addEventListener('click', () => {
+      musicOn = !musicOn;
+      controlMusic();
+    });
+  }
+
+  // --- Tema ---
+  const themeSelect = document.getElementById('themeSelect');
+  if (themeSelect) {
+    themeSelect.addEventListener('change', e => applyTheme(e.target.value));
+  }
+
+  // --- Configuración de tiempos ---
+  const settingsToggle   = document.getElementById('settingsToggle');
+  const settingsPanel    = document.getElementById('settingsPanel');
+  const cancelSettings   = document.getElementById('cancelSettings');
+  const applySettingsBtn = document.getElementById('applySettings');
+  const presetSelect     = document.getElementById('presetSelect');
+  const workInput        = document.getElementById('workInput');
+  const breakInput       = document.getElementById('breakInput');
+
+  if (settingsToggle && settingsPanel && workInput && breakInput && presetSelect) {
+    settingsToggle.addEventListener('click', ()=>{
+      const cur = loadSettings();
+      workInput.value  = cur.workMinutes;
+      breakInput.value = cur.breakMinutes;
+      presetSelect.value = '';
+      settingsPanel.classList.add('show');
+    });
+  }
+  if (cancelSettings && settingsPanel) {
+    cancelSettings.addEventListener('click', ()=> settingsPanel.classList.remove('show'));
+  }
+  if (presetSelect && workInput && breakInput) {
+    presetSelect.addEventListener('change', e=>{
+      const val = e.target.value;
+      if(val){
+        const [w,b] = val.split('-').map(Number);
+        workInput.value  = w;
+        breakInput.value = b;
+      }
+    });
+  }
+  if (applySettingsBtn && workInput && breakInput && settingsPanel) {
+    applySettingsBtn.addEventListener('click', ()=>{
+      const w = Number(workInput.value);
+      const b = Number(breakInput.value);
+      if(isNaN(w)||w<=0){ alert('Minutos de trabajo inválidos'); return; }
+      if(isNaN(b)||b<=0){ alert('Minutos de descanso inválidos'); return; }
+      const newSet = {workMinutes:w, breakMinutes:b};
+      saveSettings(newSet);
+      applySettings(newSet);
+      settingsPanel.classList.remove('show');
+    });
+  }
+
+  // --- Estadísticas ---
+  const statsToggle   = document.getElementById('statsToggle');
+  const statsPanel    = document.getElementById('statsPanel');
+  const closeStats    = document.getElementById('closeStats');
+  const exportCsvBtn  = document.getElementById('exportCsv');
+  const historyBody   = document.getElementById('historyBody');
+
+  if (statsToggle && statsPanel && historyBody) {
+    statsToggle.addEventListener('click', ()=>{
+      renderHistoryTable();
+      statsPanel.classList.remove('hidden');
+    });
+  }
+  if (closeStats && statsPanel) {
+    closeStats.addEventListener('click', ()=> statsPanel.classList.add('hidden'));
+  }
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener('click', ()=>{
+      if (!history.length) return;
+      const headers = ['Fecha','Trabajo (min)','Descanso (min)','Ciclos'];
+      let csvContent = headers.join(',') + '\n';
+      history.forEach(r => {
+        const row = [
+          r.date,
+          Math.round(r.work/60),
+          Math.round(r.break/60),
+          r.cycles
+        ];
+        csvContent += row.join(',') + '\n';
+      });
+      const file = new Blob([csvContent], { type: 'text/csv' });
+      const tempLink = document.createElement('a');
+      tempLink.href = URL.createObjectURL(file);
+      tempLink.download = 'pomodoro_historial.csv';
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+    });
+  }
+
+  // --- Export / Import Configuración ---
+  const exportConfigBtn = document.getElementById('exportConfig');
+  const importFileInput = document.getElementById('importFile');
+
+  if (exportConfigBtn) {
+    exportConfigBtn.addEventListener('click', () => {
+      const data = {
+        settings: loadSettings(),
+        theme: localStorage.getItem(LS_THEME) || 'theme-c',
+        history
+      };
+      // Versión original: crea un enlace temporal y usa FileReader para descargar
+      const json = JSON.stringify(data, null, 2);
+      const file = new File([json], 'pomodoro_config.json', { type: 'application/json' });
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const link = document.createElement('a');
+        link.href = e.target.result;
+        link.download = 'pomodoro_config.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  if (importFileInput) {
+    importFileInput.addEventListener('change', async e=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      const txt = await file.text();
+      try{
+        const obj = JSON.parse(txt);
+        if(obj.settings){ saveSettings(obj.settings); applySettings(obj.settings); }
+        if(obj.theme){ applyTheme(obj.theme); }
+        if(obj.history){ history = obj.history; saveHistory(); }
+        alert('Configuración importada correctamente.');
+        render();
+      }catch(err){
+        alert('Error al leer el archivo: '+err);
+      }
+    });
+  }
+
+  // --- Permiso de notificaciones ---
+  if ('Notification' in window && Notification.permission !== 'granted'){
+    Notification.requestPermission();
   }
 });
 
-applySettingsBtn.addEventListener('click', ()=>{
-  const w = Number(workInput.value);
-  const b = Number(breakInput.value);
-  if(isNaN(w)||w<=0){ alert('Minutos de trabajo inválidos'); return; }
-  if(isNaN(b)||b<=0){ alert('Minutos de descanso inválidos'); return; }
-  const newSet = {workMinutes:w, breakMinutes:b};
-  saveSettings(newSet);
-  applySettings(newSet);
-  settingsPanel.classList.remove('show');
-});
+/* --------------------------------------------------------------
+   CONTROL DE FASES Y MÚSICA
+-------------------------------------------------------------- */
+function nextPhaseWithMusic(){
+  nextPhase();
+  controlMusic();
+}
+function startTimerWithMusic() {
+  startTimer();
+  controlMusic();
+}
 
-/* Estadísticas */
-const statsToggle   = document.getElementById('statsToggle');
-const statsPanel    = document.getElementById('statsPanel');
-const closeStats    = document.getElementById('closeStats');
-const exportCsvBtn  = document.getElementById('exportCsv');
-const historyBody   = document.getElementById('historyBody');
-
-statsToggle.addEventListener('click', ()=>{
-  renderHistoryTable();
-  statsPanel.classList.remove('hidden');
-});
-closeStats.addEventListener('click', ()=> statsPanel.classList.add('hidden'));
-
+/* --------------------------------------------------------------
+   HISTORIAL EN TABLA
+-------------------------------------------------------------- */
 function renderHistoryTable(){
+  const historyBody = document.getElementById('historyBody');
+  if (!historyBody) return;
   historyBody.innerHTML = '';
   history.sort((a,b)=> b.date.localeCompare(a.date))
          .forEach(r=>{
@@ -360,125 +489,4 @@ function renderHistoryTable(){
       <td class="py-1 text-right">${r.cycles}</td>`;
     historyBody.appendChild(tr);
   });
-}
-
-exportCsvBtn.addEventListener('click', ()=>{
-  if (!history.length) return;
-  const headers = ['Fecha','Trabajo (min)','Descanso (min)','Ciclos'];
-  let csvContent = headers.join(',') + '\n';
-  history.forEach(r => {
-    const row = [
-      r.date,
-      Math.round(r.work/60),
-      Math.round(r.break/60),
-      r.cycles
-    ];
-    csvContent += row.join(',') + '\n';
-  });
-  const file = new Blob([csvContent], { type: 'text/csv' });
-  const tempLink = document.createElement('a');
-  tempLink.href = URL.createObjectURL(file);
-  tempLink.download = 'pomodoro_historial.csv';
-  document.body.appendChild(tempLink);
-  tempLink.click();
-  document.body.removeChild(tempLink);
-});
-
-/* Export / Import Configuración */
-const exportConfigBtn = document.getElementById('exportConfig');
-const importFileInput = document.getElementById('importFile');
-
-exportConfigBtn.addEventListener('click', ()=>{
-  const data = {
-    settings: loadSettings(),
-    theme: localStorage.getItem(LS_THEME) || 'theme-c',
-    history
-  };
-  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'pomodoro_config.json';
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-importFileInput.addEventListener('change', async e=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const txt = await file.text();
-  try{
-    const obj = JSON.parse(txt);
-    if(obj.settings){ saveSettings(obj.settings); applySettings(obj.settings); }
-    if(obj.theme){ applyTheme(obj.theme); }
-    if(obj.history){ history = obj.history; saveHistory(); }
-    alert('Configuración importada correctamente.');
-    render();
-  }catch(err){
-    alert('Error al leer el archivo: '+err);
-  }
-});
-
-/* --------------------------------------------------------------
-   INICIALIZACIÓN
--------------------------------------------------------------- */
-document.addEventListener('DOMContentLoaded', () => {
-  // Inicialización de tema
-  loadTheme();
-  const themeSelect = document.getElementById('themeSelect');
-  if (themeSelect) {
-    themeSelect.addEventListener('change', e => applyTheme(e.target.value));
-  }
-
-  // Inicialización de estado y settings
-  loadState();
-  loadHistory();
-  applySettings(loadSettings());
-  render();
-
-  // Botones principales
-  const startBtn = document.getElementById('startBtn');
-  const pauseBtn = document.getElementById('pauseBtn');
-  const resetBtn = document.getElementById('resetBtn');
-  if (startBtn && pauseBtn && resetBtn) {
-    startBtn.addEventListener('click', startTimerWithMusic);
-    pauseBtn.addEventListener('click', pauseTimer);
-    resetBtn.addEventListener('click', resetTimer);
-  }
-
-  // Solicitar permiso de notificaciones
-  if ('Notification' in window && Notification.permission !== 'granted'){
-    Notification.requestPermission();
-  }
-
-  // --- Control manual de música ---
-  const musicToggle = document.getElementById('musicToggle');
-  const musicStatus = document.getElementById('musicStatus');
-  const music = document.getElementById('focusMusic');
-
-  if (music) music.volume = 1.0; // Asegura volumen al máximo
-
-  if (musicToggle && musicStatus && music) {
-    musicToggle.addEventListener('click', () => {
-      musicOn = !musicOn;
-      if (musicOn) {
-        music.play().catch(()=>{});
-        musicStatus.textContent = 'On';
-      } else {
-        music.pause();
-        musicStatus.textContent = 'Off';
-      }
-    });
-  }
-
-});
-
-/* Control automático de música al cambiar de fase */
-function nextPhaseWithMusic(){
-  nextPhase();
-  controlMusic();
-}
-function startTimerWithMusic(){
-  startTimer();
-  controlMusic();
 }
