@@ -124,6 +124,13 @@
     <div class="text-sm text-gray-600 mb-2"><span id="sessionInfo">Sesión de trabajo</span></div>
     <div class="text-xs text-gray-500 mb-2" id="cycleCount"></div>
 
+    <!-- Control de música de enfoque -->
+<div class="flex justify-center mb-2">
+  <button id="musicToggle" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+    🎵 Música: <span id="musicStatus">On</span>
+  </button>
+</div>
+
     <!-- Export / Import (apilado en móvil) -->
     <div class="flex flex-col sm:flex-row gap-2 justify-center mt-4">
       <button id="exportConfig"
@@ -140,9 +147,7 @@
   </div>
 
   <!-- Música de fondo (oculta en móvil si no se desea) -->
-  <audio id="focusMusic" loop preload="auto"
-         src="https://cdn.pixabay.com/audio/2023/04/03/audio_1234567890.mp3"
-         class="hidden md:block"></audio>
+  <audio id="focusMusic" loop src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae7e2.mp3"></audio>
   <script src="script.js"></script>
 </body>
 </html>

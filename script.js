@@ -273,11 +273,14 @@ function playBeep(){
 /* --------------------------------------------------------------
    CONTROL DE MÚSICA DE ENFOQUE
 -------------------------------------------------------------- */
-const music = document.getElementById('focusMusic');
-function controlMusic(){
-  if(state.phase === 'work'){
+let musicOn = true; // Por defecto la música está activa
+
+function controlMusic() {
+  const music = document.getElementById('focusMusic');
+  if (!music) return;
+  if (musicOn && state.phase === 'work') {
     music.play().catch(()=>{});
-  }else{
+  } else {
     music.pause();
   }
 }
@@ -360,21 +363,25 @@ function renderHistoryTable(){
 }
 
 exportCsvBtn.addEventListener('click', ()=>{
-  const header = ['Fecha','Trabajo (min)','Descanso (min)','Ciclos'];
-  const rows = history.map(r=>[
-    r.date,
-    Math.round(r.work/60),
-    Math.round(r.break/60),
-    r.cycles
-  ]);
-  const csv = [header, ...rows].map(e=>e.join(',')).join('\n');
-  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'pomodoro_historial.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+  if (!history.length) return;
+  const headers = ['Fecha','Trabajo (min)','Descanso (min)','Ciclos'];
+  let csvContent = headers.join(',') + '\n';
+  history.forEach(r => {
+    const row = [
+      r.date,
+      Math.round(r.work/60),
+      Math.round(r.break/60),
+      r.cycles
+    ];
+    csvContent += row.join(',') + '\n';
+  });
+  const file = new Blob([csvContent], { type: 'text/csv' });
+  const tempLink = document.createElement('a');
+  tempLink.href = URL.createObjectURL(file);
+  tempLink.download = 'pomodoro_historial.csv';
+  document.body.appendChild(tempLink);
+  tempLink.click();
+  document.body.removeChild(tempLink);
 });
 
 /* Export / Import Configuración */
